@@ -1,0 +1,25 @@
+"""Constants used by dataset preprocessing."""
+
+VEGETATION_COLUMNS = [
+    "avg_RVI_all", "std_RVI_all", "Q1_RVI_all", "Q2_RVI_all", "Q3_RVI_all",
+    "avg_NDVI_all", "std_NDVI_all", "Q1_NDVI_all", "Q2_NDVI_all", "Q3_NDVI_all",
+    "avg_GNDVI_all", "std_GNDVI_all", "Q1_GNDVI_all", "Q2_GNDVI_all", "Q3_GNDVI_all",
+    "avg_EVI_all", "std_EVI_all", "Q1_EVI_all", "Q2_EVI_all", "Q3_EVI_all",
+    "avg_SAVI_all", "std_SAVI_all", "Q1_SAVI_all", "Q2_SAVI_all", "Q3_SAVI_all",
+    "avg_RVI_no_thick", "std_RVI_no_thick", "Q1_RVI_no_thick", "Q2_RVI_no_thick", "Q3_RVI_no_thick",
+    "avg_NDVI_no_thick", "std_NDVI_no_thick", "Q1_NDVI_no_thick", "Q2_NDVI_no_thick", "Q3_NDVI_no_thick",
+    "avg_GNDVI_no_thick", "std_GNDVI_no_thick", "Q1_GNDVI_no_thick", "Q2_GNDVI_no_thick", "Q3_GNDVI_no_thick",
+    "avg_EVI_no_thick", "std_EVI_no_thick", "Q1_EVI_no_thick", "Q2_EVI_no_thick", "Q3_EVI_no_thick",
+    "avg_SAVI_no_thick", "std_SAVI_no_thick", "Q1_SAVI_no_thick", "Q2_SAVI_no_thick", "Q3_SAVI_no_thick",
+    "avg_RVI_no_clouds", "std_RVI_no_clouds", "Q1_RVI_no_clouds", "Q2_RVI_no_clouds", "Q3_RVI_no_clouds",
+    "avg_NDVI_no_clouds", "std_NDVI_no_clouds", "Q1_NDVI_no_clouds", "Q2_NDVI_no_clouds", "Q3_NDVI_no_clouds",
+    "avg_GNDVI_no_clouds", "std_GNDVI_no_clouds", "Q1_GNDVI_no_clouds", "Q2_GNDVI_no_clouds", "Q3_GNDVI_no_clouds",
+    "avg_EVI_no_clouds", "std_EVI_no_clouds", "Q1_EVI_no_clouds", "Q2_EVI_no_clouds", "Q3_EVI_no_clouds",
+    "avg_SAVI_no_clouds", "std_SAVI_no_clouds", "Q1_SAVI_no_clouds", "Q2_SAVI_no_clouds", "Q3_SAVI_no_clouds",
+    "avg_RVI_clear_sky", "std_RVI_clear_sky", "Q1_RVI_clear_sky", "Q2_RVI_clear_sky", "Q3_RVI_clear_sky",
+    "avg_NDVI_clear_sky", "std_NDVI_clear_sky", "Q1_NDVI_clear_sky", "Q2_NDVI_clear_sky", "Q3_NDVI_clear_sky",
+    "avg_GNDVI_clear_sky", "std_GNDVI_clear_sky", "Q1_GNDVI_clear_sky", "Q2_GNDVI_clear_sky", "Q3_GNDVI_clear_sky",
+    "avg_EVI_clear_sky", "std_EVI_clear_sky", "Q1_EVI_clear_sky", "Q2_EVI_clear_sky", "Q3_EVI_clear_sky",
+    "avg_SAVI_clear_sky", "std_SAVI_clear_sky", "Q1_SAVI_clear_sky", "Q2_SAVI_clear_sky", "Q3_SAVI_clear_sky",
+    "s2_avail", "avg_NDVI_clear_sky_interpolated", "avg_NDVI_all_filtered",
+]

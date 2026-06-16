@@ -1,0 +1,56 @@
+model_type: vegetation_world_model
+dynamics_type: residual_mlp
+cache_root: Data/cache/train_avg_NDVI_clear_sky
+train_split: 0.8
+apply_scaling: true
+feature_engineering: true
+quantiles: [0.1, 0.5, 0.9]
+
+# shared backbone
+d_model: 128
+num_layers: 4
+num_heads: 4
+dim_feedforward: 256
+dropout: 0.1
+
+# world model
+summarizer_type: attention_pooling
+latent_dim: 128
+sample_initial_state: true
+use_horizon_embedding: true
+horizon_emb_dim: 32
+horizon_embedding_type: learned
+spatial_enabled: false
+
+dynamics_hidden_dim: 128
+dynamics_num_layers: 2
+
+use_horizon_conditioned_decoder: false
+enforce_quantile_ordering: false
+
+# losses
+smoothness_loss_weight: 0.0
+aux_loss_weight: 0.0
+rssm_kl_weight: 0.0
+noncrossing_loss_weight: 0.0
+sigreg_weight: 0.0
+sigreg_num_proj: 256
+sigreg_knots: 17
+use_sigreg_projector: false
+sigreg_projector_hidden_dim: 128
+sigreg_projector_output_dim: 128
+sigreg_projector_num_layers: 1
+sigreg_projector_dropout: 0.0
+use_risk_head: false
+risk_loss_weight: 0.0
+
+# optimization
+epochs: 200
+batch_size: 128
+lr: 1.0e-4
+lr_reduce_on_plateau: true
+lr_factor: 0.2
+lr_patience: 20
+lr_min: 5.0e-5
+
+time_weight_alpha: 0.1

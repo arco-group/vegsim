@@ -1,0 +1,138 @@
+temp_p1:
+  temperature_additive: 1.0
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+
+temp_p2:
+  temperature_additive: 2.0
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+
+temp_p4:
+  temperature_additive: 4.0
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+
+temp_m1:
+  temperature_additive: -1.0
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+
+temp_m2:
+  temperature_additive: -2.0
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+
+temp_m4:
+  temperature_additive: -4.0
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+
+precip_m10:
+  precipitation_multiplier: 0.9
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+precip_m20:
+  precipitation_multiplier: 0.8
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+precip_m40:
+  precipitation_multiplier: 0.6
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+precip_p10:
+  precipitation_multiplier: 1.1
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+hot2_dry20:
+  temperature_additive: 2.0
+  precipitation_multiplier: 0.8
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+hot4_dry40:
+  temperature_additive: 4.0
+  precipitation_multiplier: 0.6
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+cold2_wet10:
+  temperature_additive: -2.0
+  precipitation_multiplier: 1.1
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+ssp245:
+  temperature_additive: 2.0
+  precipitation_multiplier: 0.8
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
+
+wet_warming:
+  temperature_additive: 1.5
+  precipitation_multiplier: 1.15
+  temperature_feature_names:
+    - avg_temperature
+    - min_temperature
+    - max_temperature
+  precipitation_feature_names:
+    - rainfall
+    - rain_cum_between_targets
+    - rain_cum_7d
+    - rain_cum_14d
