@@ -1,0 +1,3 @@
+hotdry:
+  temperature_additive: 4.0
+  precipitation_multiplier: 0.6
