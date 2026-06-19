@@ -38,8 +38,8 @@ import sys
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from world_matnet.training.datamodule import CacheDataModule
-from world_matnet.training.world_lightning_module import VegetationWorldLightningModule
+from training.datamodule import CacheDataModule
+from training.world_lightning_module import VegetationWorldLightningModule
 
 
 def str2bool(v):
@@ -307,7 +307,7 @@ def _compute_metrics(df: pd.DataFrame) -> dict[str, float]:
     den_wmape = np.abs(y).sum()
     wmape = float(abs_e.sum() / den_wmape) if den_wmape > 1e-12 else float("nan")
 
-    # Naive baseline from consecutive observed targets within each sample.
+    # Naive reference from consecutive observed targets within each sample.
     mase_num = []
     for _, g in df.sort_values(["sample_key", "target_ts"]).groupby("sample_key"):
         yy = g["gt"].to_numpy(dtype=np.float64)

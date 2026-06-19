@@ -1,9 +1,4 @@
-"""CLI training entrypoint using PyTorch Lightning.
-
-Supports:
-- baseline_forecaster (existing quantile model)
-- vegetation_world_model (new modular world model)
-"""
+"""CLI training entrypoint for the VegSim vegetation world model."""
 
 from __future__ import annotations
 
@@ -32,11 +27,9 @@ except ImportError:  # pragma: no cover
 import torch
 import yaml
 
-from world_matnet.training.batch import build_feature_index
-from world_matnet.training.datamodule import CacheDataModule
-from world_matnet.training.lightning_module import QuantileLightningModule
-from world_matnet.training.utils import set_seed, str2bool
-from world_matnet.training.world_lightning_module import VegetationWorldLightningModule
+from training.datamodule import CacheDataModule
+from training.utils import set_seed, str2bool
+from training.world_lightning_module import VegetationWorldLightningModule
 
 
 def parse_quantiles(value):
@@ -115,7 +108,7 @@ def _load_yaml_config(path: str | None) -> dict:
 
 
 def build_parser(config_defaults: dict | None = None) -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Vegetation forecasting/world-model Lightning training")
+    parser = argparse.ArgumentParser(description="VegSim vegetation world-model Lightning training")
     parser.add_argument("--config", type=str, default=None, help="YAML config preset")
 
     # Data and training setup
@@ -144,8 +137,7 @@ def build_parser(config_defaults: dict | None = None) -> argparse.ArgumentParser
     parser.add_argument("--apply-scaling", type=str2bool, default=True)
     parser.add_argument("--feature-engineering", type=str2bool, default=False)
     parser.add_argument("--discretize-target", type=str2bool, default=False)
-    parser.add_argument("--experiment-name", type=str, default="quantile_lightning")
-    parser.add_argument("--model-type", type=str, default="baseline_forecaster", choices=["baseline_forecaster", "vegetation_world_model"])
+    parser.add_argument("--experiment-name", type=str, default="vegsim_gru")
 
     # LR scheduling
     parser.add_argument("--lr-reduce-on-plateau", type=str2bool, default=False)
@@ -160,11 +152,7 @@ def build_parser(config_defaults: dict | None = None) -> argparse.ArgumentParser
     parser.add_argument("--dim-feedforward", type=int, default=256)
     parser.add_argument("--dropout", type=float, default=0.1)
 
-    # Baseline ablations
     parser.add_argument("--time-weight-alpha", type=float, default=None)
-    parser.add_argument("--ablate-future-covariates", type=str2bool, default=False)
-    parser.add_argument("--ablate-history-covariates", type=str2bool, default=False)
-    parser.add_argument("--ablate-target-history", type=str2bool, default=False)
 
     # World-model architecture
     parser.add_argument("--target-dim", type=int, default=1)
@@ -285,36 +273,9 @@ def parse_args():
 
 
 def _build_model(args, datamodule):
-    feature_names = datamodule.feature_names
     input_dim = datamodule.get_input_dim()
     target_dim_data = datamodule.get_target_dim()
     target_dim = max(1, int(args.target_dim or target_dim_data))
-
-    if args.model_type == "baseline_forecaster":
-        feature_idx = build_feature_index(feature_names)
-        ablation_cfg = {
-            "future_covariates_off": args.ablate_future_covariates,
-            "history_covariates_off": args.ablate_history_covariates,
-            "target_history_off": args.ablate_target_history,
-        }
-        model = QuantileLightningModule(
-            input_dim=input_dim,
-            quantiles=args.quantiles,
-            lr=args.lr,
-            d_model=args.d_model,
-            num_layers=args.num_layers,
-            num_heads=args.num_heads,
-            dim_feedforward=args.dim_feedforward,
-            dropout=args.dropout,
-            ablation_cfg=ablation_cfg,
-            feature_idx=feature_idx,
-            time_weight_alpha=args.time_weight_alpha,
-            lr_reduce_on_plateau=args.lr_reduce_on_plateau,
-            lr_factor=args.lr_factor,
-            lr_patience=args.lr_patience,
-            lr_min=args.lr_min,
-        )
-        return model
 
     spatial_cards = args.spatial_cat_cardinalities
     if spatial_cards is None:
@@ -398,11 +359,7 @@ def _default_monitor(args) -> str:
 
 
 def _model_name_tag(model_type: str) -> str:
-    if model_type == "vegetation_world_model":
-        return "wm"
-    if model_type == "baseline_forecaster":
-        return "baseline"
-    return str(model_type)
+    return "vegsim"
 
 
 def _save_run_metadata(output_dir: Path, args, datamodule, monitor: str):
@@ -492,9 +449,8 @@ def main():
     model = _build_model(args, datamodule)
 
     run_name = args.experiment_name
-    model_tag = _model_name_tag(args.model_type)
-    if args.model_type == "vegetation_world_model":
-        run_name = f"{run_name}_{model_tag}_{args.dynamics_type}_seed{args.seed}"
+    model_tag = _model_name_tag("vegetation_world_model")
+    run_name = f"{run_name}_{model_tag}_{args.dynamics_type}_seed{args.seed}"
 
     output_dir = Path(args.checkpoint_root) / run_name
     output_dir.mkdir(parents=True, exist_ok=True)

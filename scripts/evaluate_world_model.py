@@ -17,8 +17,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from world_matnet.training.datamodule import CacheDataModule
-from world_matnet.training.world_lightning_module import VegetationWorldLightningModule
+from training.datamodule import CacheDataModule
+from training.world_lightning_module import VegetationWorldLightningModule
 
 
 def str2bool(value):
@@ -301,8 +301,7 @@ def main():
                     total_abs_error_sq_items += float((abs_vals_i.pow(2)).sum().item())
                     total_abs_error_item_count += int(abs_vals_i.numel())
 
-                # MASE variant aligned with test_quantile_ablation.py:
-                # naive baseline = last valid historical target value.
+                # MASE variant: naive reference = last valid historical target value.
                 if isinstance(y_hist_metric_batch, torch.Tensor):
                     y_hist_i = y_hist_metric_batch[i]
                     if y_hist_i.dim() > 1:

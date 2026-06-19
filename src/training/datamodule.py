@@ -10,8 +10,8 @@ except ImportError:  # pragma: no cover
 import torch
 from torch.utils.data import DataLoader, random_split
 
-from world_matnet.data.dataset import CacheTimeSeriesDataset
-from world_matnet.training.batch import collate_variable
+from data.dataset import CacheTimeSeriesDataset
+from training.batch import collate_variable
 
 
 class CacheDataModule(pl.LightningDataModule):

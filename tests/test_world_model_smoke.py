@@ -14,10 +14,10 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from world_matnet.scenario import perturb_future_covariates
-from world_matnet.training.batch import collate_variable
-from world_matnet.training.world_lightning_module import VegetationWorldLightningModule
-from world_matnet.models.world_model import VegetationWorldModel
+from scenario import perturb_future_covariates
+from training.batch import collate_variable
+from training.world_lightning_module import VegetationWorldLightningModule
+from models.world_model import VegetationWorldModel
 
 
 def _make_item(hist_len: int, fut_len: int, positions: list[int], values: list[float], feature_dim: int = 6):

@@ -10,7 +10,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from world_matnet.data.cache_builder import DatasetCacheBuilder, parse_args
+from data.cache_builder import DatasetCacheBuilder, parse_args
 
 
 if __name__ == "__main__":

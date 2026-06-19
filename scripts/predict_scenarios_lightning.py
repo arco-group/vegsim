@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Scenario inference utility for the vegetation world model.
 
-Loads a Lightning checkpoint, runs baseline and perturbed future-covariate
+Loads a Lightning checkpoint, runs unperturbed and perturbed future-covariate
 scenarios, and saves NPZ outputs for downstream analysis.
 """
 
@@ -27,9 +27,9 @@ import sys
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from world_matnet.scenario import perturb_future_covariates_physical
-from world_matnet.training.datamodule import CacheDataModule
-from world_matnet.training.world_lightning_module import VegetationWorldLightningModule
+from scenario import perturb_future_covariates_physical
+from training.datamodule import CacheDataModule
+from training.world_lightning_module import VegetationWorldLightningModule
 
 
 def str2bool(value):
@@ -61,7 +61,7 @@ def parse_args():
     parser.add_argument("--data-summary-path", type=str, default="Data/dataSummary_completed.csv")
     parser.add_argument("--pin-memory", type=str2bool, default=False)
     parser.add_argument("--scenarios", type=str, default=None, help="YAML/JSON file with scenario mapping")
-    parser.add_argument("--run-baseline-only", type=str2bool, default=False)
+    parser.add_argument("--run-unperturbed-only", type=str2bool, default=False)
     return parser.parse_args()
 
 
@@ -149,7 +149,7 @@ def main():
     if feature_names is None:
         raise RuntimeError("Could not infer feature names from cache")
 
-    scenarios = {} if args.run_baseline_only else _load_scenarios(args.scenarios)
+    scenarios = {} if args.run_unperturbed_only else _load_scenarios(args.scenarios)
 
     ckpt_path = Path(args.checkpoint)
     if not ckpt_path.exists():
@@ -169,9 +169,9 @@ def main():
     full_len = max(len(seq) for seq in predict_dataset.future_sequences)
     scenario_scaler = predict_dataset.scaler if args.apply_scaling else None
 
-    baseline_quantiles = []
-    baseline_median = []
-    baseline_risk = []
+    unperturbed_quantiles = []
+    unperturbed_median = []
+    unperturbed_risk = []
     pad_masks = []
     latents = []
 
@@ -198,8 +198,8 @@ def main():
             base_q = _pad_to_len(base_out["quantiles"], full_len, pad_value=0.0)
             base_m = base_q[..., module.median_idx]
 
-            baseline_quantiles.append(base_q.cpu())
-            baseline_median.append(base_m.cpu())
+            unperturbed_quantiles.append(base_q.cpu())
+            unperturbed_median.append(base_m.cpu())
             latents.append(_pad_to_len(base_out["latent_states"], full_len, pad_value=0.0).cpu())
 
             future_pad = _pad_to_len(batch["future_pad_mask"].unsqueeze(-1).float(), full_len, pad_value=1.0).squeeze(-1)
@@ -210,7 +210,7 @@ def main():
 
             if "risk_logits" in base_out:
                 base_r = torch.sigmoid(_pad_to_len(base_out["risk_logits"], full_len, pad_value=0.0))
-                baseline_risk.append(base_r.cpu())
+                unperturbed_risk.append(base_r.cpu())
 
             if scenarios:
                 for name, cfg in scenarios.items():
@@ -252,20 +252,20 @@ def main():
             if "future_timestamps" in batch:
                 future_timestamps_all.extend(_pad_timestamp_rows(batch["future_timestamps"], full_len))
 
-    base_q_all = torch.cat(baseline_quantiles, dim=0).numpy()
-    base_m_all = torch.cat(baseline_median, dim=0).numpy()
+    base_q_all = torch.cat(unperturbed_quantiles, dim=0).numpy()
+    base_m_all = torch.cat(unperturbed_median, dim=0).numpy()
     pad_mask_all = torch.cat(pad_masks, dim=0).numpy().astype(bool)
     latent_all = torch.cat(latents, dim=0).numpy()
 
     base_r_all = None
-    if baseline_risk:
-        base_r_all = torch.cat(baseline_risk, dim=0).numpy()
+    if unperturbed_risk:
+        base_r_all = torch.cat(unperturbed_risk, dim=0).numpy()
 
     npz_payload: dict[str, np.ndarray] = {
         "feature_names": np.array(feature_names, dtype=object),
         "quantile_levels": np.array(module.quantiles, dtype=np.float32),
-        "baseline_quantiles": base_q_all,
-        "baseline_median": base_m_all,
+        "unperturbed_quantiles": base_q_all,
+        "unperturbed_median": base_m_all,
         "latent_states": latent_all,
         "future_pad_mask": pad_mask_all,
         "area": np.array(areas, dtype=object),
@@ -284,7 +284,7 @@ def main():
         npz_payload["future_delta_days"] = np.concatenate(future_delta_days_all, axis=0)
 
     if base_r_all is not None:
-        npz_payload["baseline_risk"] = base_r_all
+        npz_payload["unperturbed_risk"] = base_r_all
 
     for name in scenarios:
         sq = torch.cat(scenario_quantiles[name], dim=0).numpy()

@@ -1,8 +1,4 @@
-"""Modular scenario-aware vegetation world model components.
-
-This module keeps the baseline forecaster untouched and adds a new model family
-for latent-state rollout with sparse supervision.
-"""
+"""Modular scenario-aware vegetation world model components."""
 
 from __future__ import annotations
 

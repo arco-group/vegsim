@@ -1,4 +1,4 @@
-"""Batch collation and ablation helpers."""
+"""Batch collation helpers for variable-length vegetation sequences."""
 
 import hashlib
 
@@ -134,7 +134,7 @@ def collate_variable(batch):
     collated["target_delta_days"] = torch.stack(target_delta_days)
     collated["future_delta_days"] = torch.stack(future_delta_days)
 
-    # Derived views for world-model family (kept additive for baseline compatibility).
+    # Derived views used by the world-model family.
     history = collated["history"]
     future = collated["future"]
     history_mask = collated["history_mask"]
@@ -173,46 +173,6 @@ def collate_variable(batch):
     collated["spatial_cat"] = torch.stack([climate_ids, crop_ids], dim=-1)
 
     return collated
-
-
-def mask_columns(tensor, indices):
-    if not indices:
-        return
-    tensor[..., indices] = 0.0
-
-
-def build_feature_index(feature_names):
-    if not feature_names:
-        raise ValueError("feature_names missing in dataset")
-    target_history_idx = len(feature_names) - 1
-    covariate_indices = list(range(target_history_idx))
-    return {"target_history": target_history_idx, "covariates": covariate_indices}
-
-
-def apply_ablation(batch, ablation_cfg, feature_idx):
-    cov_idxs = feature_idx["covariates"]
-
-    def safe_mask(tensor):
-        feat_dim = tensor.shape[-1]
-        bad = [i for i in cov_idxs if i >= feat_dim or i < -feat_dim]
-        if bad:
-            raise ValueError(f"Covariate index out of range: {bad}, feat_dim={feat_dim}")
-        mask_columns(tensor, cov_idxs)
-
-    if ablation_cfg.get("future_covariates_off", False):
-        safe_mask(batch["future"])
-        if "future_noise" in batch:
-            noise_dim = batch["future_noise"].shape[-1]
-            noise_cov_idxs = [i for i in cov_idxs if -noise_dim <= i < noise_dim]
-            batch["future_noise"][..., noise_cov_idxs] = 0.0
-
-    if ablation_cfg.get("history_covariates_off", False):
-        safe_mask(batch["history"])
-
-    if ablation_cfg.get("target_history_off", False):
-        mask_columns(batch["history"], [-1])
-
-    return batch
 
 
 def masked_time_weighted_mse(preds, targets, mask, delta_days, alpha):

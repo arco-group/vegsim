@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from world_matnet.models.world_model import (
+from models.world_model import (
     SketchedIsotropicGaussianRegularizer,
     VegetationWorldModel,
     calibration_metrics,

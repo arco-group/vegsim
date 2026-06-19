@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checkpoint smoke check for world_model_gru LightningModule."""
+"""Checkpoint smoke check for the VegSim GRU LightningModule."""
 
 from __future__ import annotations
 
@@ -21,8 +21,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from world_matnet.training.batch import collate_variable
-from world_matnet.training.world_lightning_module import VegetationWorldLightningModule
+from training.batch import collate_variable
+from training.world_lightning_module import VegetationWorldLightningModule
 
 
 def _make_item(hist_len: int, fut_len: int, positions: list[int], values: list[float], feature_dim: int = 6):
@@ -115,7 +115,7 @@ def main():
     trainer.fit(module, train_dataloaders=loader, val_dataloaders=loader)
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        ckpt_path = Path(tmpdir) / "world_model_gru.ckpt"
+        ckpt_path = Path(tmpdir) / "vegsim_gru.ckpt"
         trainer.save_checkpoint(str(ckpt_path))
         restored = VegetationWorldLightningModule.load_from_checkpoint(str(ckpt_path), map_location="cpu")
         restored.eval()

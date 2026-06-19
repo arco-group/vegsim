@@ -18,22 +18,19 @@
 VegSim is a PyTorch Lightning codebase for vegetation-index forecasting and counterfactual scenario simulation. It includes:
 
 - cache construction from geospatial time-series CSV files;
-- baseline quantile forecasting models;
 - a modular vegetation world model with latent dynamics;
 - scenario-conditioned inference for meteorological perturbations;
 - evaluation utilities for trained checkpoints.
 
-The import package is currently named `world_matnet` for compatibility with the research code, while the public project and repository are named VegSim.
-
 ## Repository Layout
 
 ```text
-src/world_matnet/
+src/
+  configs/     YAML preset for the released VegSim GRU model
   data/        Dataset cache builder, scaling, metadata, temporal utilities
-  models/      Baseline quantile model and vegetation world model
-  training/    DataModule, Lightning modules, training CLI
+  models/      Vegetation world model
+  training/    DataModule, Lightning module, training CLI
   scenario/    Scenario perturbation utilities
-  configs/     YAML presets for baseline and world-model experiments
 scripts/       Cache building, training, evaluation, and scenario simulation CLIs
 experiments/   Reusable scenario configuration files
 case_study_2022_drought/
@@ -54,12 +51,6 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -U pip
 pip install -e ".[dev]"
-```
-
-Optional analysis dependencies:
-
-```bash
-pip install -e ".[analysis]"
 ```
 
 ## Data Format
@@ -100,25 +91,11 @@ The main batch tensors used by the world model are:
 
 ## Training
 
-Train a baseline quantile forecaster:
-
-```bash
-python scripts/train_lightning.py \
-  --model-type baseline_forecaster \
-  --cache-root Data/cache/train_avg_NDVI_clear_sky \
-  --quantiles 0.1,0.5,0.9 \
-  --epochs 200 \
-  --batch-size 128 \
-  --logger-type csv \
-  --experiment-name baseline_run
-```
-
 Train the GRU vegetation world model from a preset:
 
 ```bash
 python scripts/train_lightning.py \
-  --config src/world_matnet/configs/world_model_gru.yaml \
-  --model-type vegetation_world_model \
+  --config src/configs/vegsim_gru.yaml \
   --cache-root Data/cache/train_avg_NDVI_clear_sky \
   --logger-type csv \
   --experiment-name vegsim_gru
@@ -132,7 +109,7 @@ Evaluate a trained world-model checkpoint:
 
 ```bash
 python scripts/evaluate_world_model.py \
-  --checkpoint checkpoints/vegsim_gru_vegetation_world_model_gru_seed42/last.ckpt \
+  --checkpoint checkpoints/wm_gru_ab08_spatial_climate_harm/best.ckpt \
   --cache-root Data/cache/ood-st_chopped_avg_NDVI_clear_sky \
   --scaler-path Data/cache/train_avg_NDVI_clear_sky/scaler.json \
   --metrics-original-scale true \
@@ -143,18 +120,18 @@ The evaluator reports aggregate MAE, RMSE, pinball loss, calibration diagnostics
 
 ## Scenario Simulation
 
-Run baseline and perturbed meteorological scenarios from a trained world-model checkpoint:
+Run unperturbed and perturbed meteorological scenarios from a trained world-model checkpoint:
 
 ```bash
 python scripts/predict_scenarios_lightning.py \
-  --checkpoint checkpoints/vegsim_gru_vegetation_world_model_gru_seed42/last.ckpt \
+  --checkpoint checkpoints/wm_gru_ab08_spatial_climate_harm/best.ckpt \
   --cache-root Data/cache/ood-st_chopped_avg_NDVI_clear_sky \
   --scaler-path Data/cache/train_avg_NDVI_clear_sky/scaler.json \
   --scenarios experiments/paper_scenarios_v1.yaml \
   --output outputs/scenario_predictions_oodst.npz
 ```
 
-The scenario output contains baseline quantiles, scenario quantiles, median deltas, optional risk scores, geospatial metadata, and scenario metadata.
+The scenario output contains unperturbed quantiles, scenario quantiles, median deltas, optional risk scores, geospatial metadata, and scenario metadata.
 
 ## 2022 Drought Case Study
 
