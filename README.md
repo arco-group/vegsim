@@ -1,6 +1,5 @@
 <div align="center">
-<h1>VegSim</h1>
-<h3>A Geospatial World Model for Scenario-Conditioned Vegetation Simulation</h3>
+<h1>VegSim: A Geospatial World Model for Scenario-Conditioned Vegetation Simulation</h1>
 
 [Irene Iele](https://scholar.google.com/citations?user=srLH7lkAAAAJ&hl=it&oi=ao)<sup>1</sup>,
 [Elena Mulero Ayllon](https://scholar.google.com/citations?user=-BOMvaUAAAAJ&hl=it&oi=ao)<sup>1</sup>,
