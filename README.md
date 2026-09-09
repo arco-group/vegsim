@@ -10,7 +10,7 @@
 <sup>2</sup>Umea University,
 <sup>3</sup>University of Genoa
 
-**🥳 Accepted at [ACM SIGSPATIAL 2026](https://sigspatial2026.sigspatial.org).**
+**🥳 Accepted at [ACM SIGSPATIAL 2026](https://sigspatial2026.sigspatial.org)!.**
 
 [Read the paper on arXiv](https://arxiv.org/pdf/2606.21961)
 
