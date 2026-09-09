@@ -22,6 +22,8 @@ VegSim is a PyTorch Lightning codebase for vegetation-index forecasting and coun
 - scenario-conditioned inference for meteorological perturbations;
 - evaluation utilities for trained checkpoints.
 
+![Overview of the VegSim method](vegsim_v3.png)
+
 ## Repository Layout
 
 ```text
